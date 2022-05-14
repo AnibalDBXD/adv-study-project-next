@@ -1,7 +1,7 @@
 import { Container, Text, Image, Button } from '@nextui-org/react'
 import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { fetchApi } from '../utils'
+import { fetchApi } from '../src/utils'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const data = await fetchApi(`/gifs/${context.query.id}`)
@@ -14,6 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const GiftPage: NextPage<{ data: any }> = ({ data }) => {
   const { push } = useRouter()
+  if (!data.length) return <Text h1>No found</Text>
   return (
     <Container>
         <Button onClick={() => push('/')} color="primary" >Go back</Button>
@@ -23,14 +24,14 @@ const GiftPage: NextPage<{ data: any }> = ({ data }) => {
           <Container justify='center' display="flex" css={{ marginTop: '$10' }}>
           <Image
             css={{
-              width: `${data.images.downsized_large.width}px`,
-              height: `${data.images.downsized_large.height}px`
+              width: `${data.images?.downsized_large?.width || 0}px`,
+              height: `${data.images?.downsized_large?.height || 0}px`
             }}
             showSkeleton
-            width={data.images.downsized_large.width}
-            height={data.images.downsized_large.height}
+            width={data.images?.downsized_large?.width || 0}
+            height={data.images?.downsized_large?.height || 0}
             alt={data.title}
-            src={data.images.downsized_large.url}
+            src={data.images?.downsized_large?.url || 0}
             />
             </Container>
     </Container>

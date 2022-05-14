@@ -5,11 +5,12 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
+import { useUserContext } from '../src/UserContext'
 
 const Home: NextPage = () => {
   const { push, query } = useRouter()
   const [search, setSearch] = useState('')
-
+  const { user } = useUserContext()
   const { data, isLoading } = useQuery<any>(['/gifs/search', { q: query.q || 'Cats', limit: 10 }])
 
   useEffect(
@@ -24,6 +25,12 @@ const Home: NextPage = () => {
     },
     [push, search]
   )
+
+  useEffect(() => {
+    if (!user) {
+      push('/login')
+    }
+  }, [push, user])
 
   return (
     <Container display='flex' justify='center'>
@@ -45,8 +52,8 @@ const Home: NextPage = () => {
           ? (
               data?.data.map(({ id, title, images: { preview_gif } }: any) => (
               <Grid key={id} xs={4}>
-                <NextLink href={`/${id}`}>
-                  <a style={{
+                <NextLink passHref href={`/${id}`}>
+                  <a href={`/${id}`} style={{
                     width: preview_gif.width,
                     height: preview_gif.height
                   }}>
