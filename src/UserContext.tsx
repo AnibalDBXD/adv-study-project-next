@@ -1,10 +1,13 @@
 import { User } from './types'
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { createContext, PropsWithChildren, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 interface UserContextValue {
   user: User | null;
   login: (user: User) => void;
+}
+interface UserProviderProps {
+  defaultUser?: User;
 }
 
 const initivalUserValue = {
@@ -14,8 +17,8 @@ const initivalUserValue = {
 
 export const UserContext = createContext<UserContextValue>(initivalUserValue)
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(initivalUserValue.user)
+export const UserProvider: React.FC<PropsWithChildren<UserProviderProps>> = ({ children, defaultUser = initivalUserValue.user }) => {
+  const [user, setUser] = useState<User | null>(defaultUser)
   const { push } = useRouter()
 
   const login = async (user: User) => {
